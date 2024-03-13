@@ -17,6 +17,7 @@ public class JoinController {
 
     @PostMapping("/join")
     public CMRespDto<?> joinProcess(@RequestBody JoinDto joinDto) {
+
         boolean state = joinService.회원가입(joinDto);
 
         if (!state) {
