@@ -1,1 +1,11 @@
-spring.application.name=Spring-JWT-Module
+spring:
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+      properties:
+        hibernate:
+          format_sql: true
+
+  config:
+    import: application-secret.yml
