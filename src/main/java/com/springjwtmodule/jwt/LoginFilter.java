@@ -1,6 +1,8 @@
 package com.springjwtmodule.jwt;
 
 import com.springjwtmodule.config.oauth.CustomUserDetails;
+import com.springjwtmodule.dto.oauth.RefreshDto;
+import com.springjwtmodule.service.RefreshService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,14 +24,13 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
     private final AuthenticationManager authenticationManager;
     private final JWTUtil jwtUtil;
+    private final RefreshService refreshService;
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
 
         String username = obtainUsername(request);
         String password = obtainPassword(request);
-
-//        System.out.println(username+":"+password);  획득 확인
 
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(username, password, null);
 
@@ -51,9 +52,11 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         String access = jwtUtil.createJwt("access", username, role, 600000L);
         String refresh = jwtUtil.createJwt("refresh", username, role, 86400000L);
 
+        refreshService.리프레시토큰생성(new RefreshDto(username, refresh, 86400000L));
+
         //응답 설정
         response.setHeader("access", access);
-        response.addCookie(createCookie("refresh", refresh));
+        response.addCookie(jwtUtil.createCookie("refresh", refresh));
         response.setStatus(HttpStatus.OK.value());
 
     }
@@ -63,15 +66,5 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         response.setStatus(401);
     }
 
-    private Cookie createCookie(String key, String value) {
 
-        Cookie cookie = new Cookie(key, value);
-        cookie.setMaxAge(24*60*60);
-        //cookie.setSecure(true);
-        //cookie.setPath("/");
-        //Front에서 자바스크립트로 접근하지 못하게 Only설정
-        cookie.setHttpOnly(true);
-
-        return cookie;
-    }
 }
