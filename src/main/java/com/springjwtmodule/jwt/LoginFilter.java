@@ -1,10 +1,9 @@
 package com.springjwtmodule.jwt;
 
-import com.springjwtmodule.config.oauth.CustomUserDetails;
 import com.springjwtmodule.dto.oauth.RefreshDto;
 import com.springjwtmodule.service.RefreshService;
+import com.springjwtmodule.service.impl.RefreshServiceImpl;
 import jakarta.servlet.FilterChain;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;

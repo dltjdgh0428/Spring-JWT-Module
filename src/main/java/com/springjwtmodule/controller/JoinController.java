@@ -3,6 +3,7 @@ package com.springjwtmodule.controller;
 import com.springjwtmodule.dto.CMRespDto;
 import com.springjwtmodule.dto.oauth.JoinDto;
 import com.springjwtmodule.service.JoinService;
+import com.springjwtmodule.service.impl.JoinServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
