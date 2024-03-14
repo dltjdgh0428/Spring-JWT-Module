@@ -16,8 +16,8 @@ public class RefreshService {
 
     private final RefreshRepository refreshRepository;
 
-    public boolean 리프레시토큰삭제(String refresh) {
-        return refreshRepository.deleteByRefresh(refresh);
+    public void 리프레시토큰삭제(String refresh) {
+        refreshRepository.deleteByRefresh(refresh);
     }
 
     public boolean 리프레시토큰조회(String refresh) {

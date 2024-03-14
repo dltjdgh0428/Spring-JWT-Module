@@ -23,53 +23,48 @@ public class JWTFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-
-        // 헤더에서 access키에 담긴 토큰을 꺼냄
         String accessToken = request.getHeader("access");
 
-        // 토큰이 없다면 다음 필터로 넘김
         if (accessToken == null) {
-
             filterChain.doFilter(request, response);
-
             return;
         }
 
-        // 토큰 만료 여부 확인, 만료시 다음 필터로 넘기지 않음
+        if (!validateToken(response, accessToken)) {
+            return;
+        }
+
+        setupAuthentication(accessToken);
+
+        filterChain.doFilter(request, response);
+    }
+
+    private boolean validateToken(HttpServletResponse response, String accessToken) throws IOException {
         try {
-            jwtUtil.isExpired(accessToken);
-        } catch (ExpiredJwtException e) {
-
-            //response body
-            PrintWriter writer = response.getWriter();
-            writer.print("access token expired");
-
-            //response status code
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return;
+            if (jwtUtil.isExpired(accessToken) || !"access".equals(jwtUtil.getCategory(accessToken))) {
+                sendErrorResponse(response, "Invalid or expired access token", HttpServletResponse.SC_UNAUTHORIZED);
+                return false;
+            }
+        } catch (Exception e) { // 넓은 범위의 예외 처리를 통해 다양한 에러 상황을 처리할 수 있습니다.
+            sendErrorResponse(response, "Token validation error", HttpServletResponse.SC_UNAUTHORIZED);
+            return false;
         }
+        return true;
+    }
 
-        // 토큰이 access인지 확인 (발급시 페이로드에 명시)
-        String category = jwtUtil.getCategory(accessToken);
-
-        if (!category.equals("access")) {
-
-            //response body
-            PrintWriter writer = response.getWriter();
-            writer.print("invalid access token");
-
-            //response status code
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return;
+    private void sendErrorResponse(HttpServletResponse response, String message, int status) throws IOException {
+        response.setStatus(status);
+        try (PrintWriter writer = response.getWriter()) {
+            writer.print(message);
         }
+    }
 
-        // username, role 값을 획득
+    private void setupAuthentication(String accessToken) {
         String username = jwtUtil.getUsername(accessToken);
         String role = jwtUtil.getRole(accessToken);
 
         User userEntity = User.builder()
                 .username(username)
-                .password("nothing")
                 .role(role)
                 .build();
 
@@ -77,8 +72,6 @@ public class JWTFilter extends OncePerRequestFilter {
 
         Authentication authToken = new UsernamePasswordAuthenticationToken(customUserDetails, null, customUserDetails.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authToken);
-
-        filterChain.doFilter(request, response);
-
     }
 }
+
