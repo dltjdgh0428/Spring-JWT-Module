@@ -2,9 +2,8 @@ package com.springjwtmodule.controller;
 
 import com.springjwtmodule.dto.CMRespDto;
 import com.springjwtmodule.dto.oauth.RefreshDto;
-import com.springjwtmodule.jwt.JWTUtil;
+import com.springjwtmodule.jwt.JwtProvider;
 import com.springjwtmodule.service.RefreshService;
-import com.springjwtmodule.service.impl.RefreshServiceImpl;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class ReissueController {
 
-    private final JWTUtil jwtUtil;
+    private final JwtProvider jwtProvider;
     private final RefreshService refreshService;
 
     @PostMapping("/reissue")
@@ -40,7 +39,7 @@ public class ReissueController {
 
         //expired check
         try {
-            jwtUtil.isExpired(refresh);
+            jwtProvider.isExpired(refresh);
         } catch (ExpiredJwtException e) {
 
             //response status code
@@ -48,7 +47,7 @@ public class ReissueController {
         }
 
         // 토큰이 refresh인지 확인 (발급시 페이로드에 명시)
-        String category = jwtUtil.getCategory(refresh);
+        String category = jwtProvider.getCategory(refresh);
 
         if (!category.equals("refresh")) {
             return new CMRespDto<>(HttpStatus.BAD_REQUEST, null, "invalid refresh token");
@@ -60,19 +59,19 @@ public class ReissueController {
         }
 
 
-        String username = jwtUtil.getUsername(refresh);
-        String role = jwtUtil.getRole(refresh);
+        String username = jwtProvider.getUsername(refresh);
+        String role = jwtProvider.getRole(refresh);
 
         //make new JWT
-        String newAccess = jwtUtil.createJwt("access", username, role, 600000L);
-        String newRefresh = jwtUtil.createJwt("refresh", username, role, 86400000L);
+        String newAccess = jwtProvider.createJwt("access", username, role, 600000L);
+        String newRefresh = jwtProvider.createJwt("refresh", username, role, 86400000L);
 
         refreshService.리프레시토큰삭제(refresh);
         refreshService.리프레시토큰생성(new RefreshDto(username, newRefresh, 86400000L));
 
         //response
         response.setHeader("access", newAccess);
-        response.addCookie(jwtUtil.createCookie("refresh", newRefresh));
+        response.addCookie(jwtProvider.createCookie("refresh", newRefresh));
 
         return new CMRespDto<>(HttpStatus.OK, null, "재발급 완료");
     }

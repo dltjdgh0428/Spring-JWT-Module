@@ -1,7 +1,6 @@
 package com.springjwtmodule.jwt;
 
 import com.springjwtmodule.service.RefreshService;
-import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
@@ -17,87 +16,56 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class CustomLogoutFilter extends GenericFilterBean {
 
-    private final JWTUtil jwtUtil;
+    private final JwtProvider jwtProvider;
     private final RefreshService refreshService;
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        doFilter((HttpServletRequest) request, (HttpServletResponse) response, chain);
+        HttpServletRequest httpRequest = (HttpServletRequest) request;
+        HttpServletResponse httpResponse = (HttpServletResponse) response;
 
+        if (isLogoutRequest(httpRequest)) {
+            handleLogout(httpRequest, httpResponse);
+        } else {
+            chain.doFilter(request, response);
+        }
     }
 
-    private void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
+    private boolean isLogoutRequest(HttpServletRequest request) {
+        return "POST".equalsIgnoreCase(request.getMethod()) && "/logout".equals(request.getRequestURI());
+    }
 
-        //path and method verify
-        String requestUri = request.getRequestURI();
-        if (!requestUri.matches("^\\/logout$")) {
-
-            filterChain.doFilter(request, response);
-            return;
-        }
-        String requestMethod = request.getMethod();
-        if (!requestMethod.equals("POST")) {
-
-            filterChain.doFilter(request, response);
+    private void handleLogout(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String refreshToken = extractRefreshToken(request);
+        if (refreshToken == null || !jwtProvider.validateToken(refreshToken)) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return;
         }
 
-        //get refresh token
-        String refresh = null;
-        Cookie[] cookies = request.getCookies();
-        for (Cookie cookie : cookies) {
+        if (!refreshService.리프레시토큰조회(refreshToken)) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return;
+        }
 
-            if (cookie.getName().equals("refresh")) {
+        refreshService.리프레시토큰삭제(refreshToken);
+        clearRefreshTokenCookie(response);
+        response.setStatus(HttpServletResponse.SC_OK);
+    }
 
-                refresh = cookie.getValue();
+    private String extractRefreshToken(HttpServletRequest request) {
+        if (request.getCookies() == null) return null;
+        for (Cookie cookie : request.getCookies()) {
+            if ("refresh".equals(cookie.getName())) {
+                return cookie.getValue();
             }
         }
+        return null;
+    }
 
-        //refresh null check
-        if (refresh == null) {
-
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return;
-        }
-
-        //expired check
-        try {
-            jwtUtil.isExpired(refresh);
-        } catch (ExpiredJwtException e) {
-
-            //response status code
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return;
-        }
-
-        // 토큰이 refresh인지 확인 (발급시 페이로드에 명시)
-        String category = jwtUtil.getCategory(refresh);
-        if (!category.equals("refresh")) {
-
-            //response status code
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return;
-        }
-
-        //DB에 저장되어 있는지 확인
-        Boolean isExist = refreshService.리프레시토큰조회(refresh);
-        if (!isExist) {
-
-            //response status code
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return;
-        }
-
-        //로그아웃 진행
-        //Refresh 토큰 DB에서 제거
-        refreshService.리프레시토큰삭제(refresh);
-
-        //Refresh 토큰 Cookie 값 0
+    private void clearRefreshTokenCookie(HttpServletResponse response) {
         Cookie cookie = new Cookie("refresh", null);
         cookie.setMaxAge(0);
         cookie.setPath("/");
-
         response.addCookie(cookie);
-        response.setStatus(HttpServletResponse.SC_OK);
     }
 }

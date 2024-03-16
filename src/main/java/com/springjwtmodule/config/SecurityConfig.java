@@ -1,9 +1,9 @@
 package com.springjwtmodule.config;
 
 import com.springjwtmodule.jwt.CustomLogoutFilter;
-import com.springjwtmodule.jwt.JWTFilter;
-import com.springjwtmodule.jwt.JWTUtil;
-import com.springjwtmodule.jwt.LoginFilter;
+import com.springjwtmodule.jwt.JwtFilter;
+import com.springjwtmodule.jwt.JwtProvider;
+import com.springjwtmodule.jwt.CustomLoginFilter;
 import com.springjwtmodule.service.RefreshService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -25,7 +25,7 @@ import org.springframework.security.web.authentication.logout.LogoutFilter;
 public class SecurityConfig {
 
     private final AuthenticationConfiguration authenticationConfiguration;
-    private final JWTUtil jwtUtil;
+    private final JwtProvider jwtProvider;
     private final RefreshService refreshService;
 
     @Bean
@@ -50,9 +50,9 @@ public class SecurityConfig {
                         .requestMatchers("/reissue").permitAll()
                         .requestMatchers("/admin").hasRole("ADMIN")
                         .anyRequest().authenticated())
-                .addFilterBefore(new JWTFilter(jwtUtil), LoginFilter.class)
-                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil, refreshService), UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(new CustomLogoutFilter(jwtUtil, refreshService), LogoutFilter.class)
+                .addFilterBefore(new JwtFilter(jwtProvider), CustomLoginFilter.class)
+                .addFilterAt(new CustomLoginFilter(authenticationManager(authenticationConfiguration), jwtProvider, refreshService), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new CustomLogoutFilter(jwtProvider, refreshService), LogoutFilter.class)
                 .sessionManagement((session) -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 

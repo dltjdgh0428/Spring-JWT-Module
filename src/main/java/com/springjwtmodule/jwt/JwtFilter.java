@@ -2,7 +2,6 @@ package com.springjwtmodule.jwt;
 
 import com.springjwtmodule.config.oauth.CustomUserDetails;
 import com.springjwtmodule.entity.user.User;
-import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,9 +16,9 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 @RequiredArgsConstructor
-public class JWTFilter extends OncePerRequestFilter {
+public class JwtFilter extends OncePerRequestFilter {
 
-    private final JWTUtil jwtUtil;
+    private final JwtProvider jwtProvider;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -41,7 +40,7 @@ public class JWTFilter extends OncePerRequestFilter {
 
     private boolean validateToken(HttpServletResponse response, String accessToken) throws IOException {
         try {
-            if (jwtUtil.isExpired(accessToken) || !"access".equals(jwtUtil.getCategory(accessToken))) {
+            if (jwtProvider.isExpired(accessToken) || !"access".equals(jwtProvider.getCategory(accessToken))) {
                 sendErrorResponse(response, "Invalid or expired access token", HttpServletResponse.SC_UNAUTHORIZED);
                 return false;
             }
@@ -60,8 +59,8 @@ public class JWTFilter extends OncePerRequestFilter {
     }
 
     private void setupAuthentication(String accessToken) {
-        String username = jwtUtil.getUsername(accessToken);
-        String role = jwtUtil.getRole(accessToken);
+        String username = jwtProvider.getUsername(accessToken);
+        String role = jwtProvider.getRole(accessToken);
 
         User userEntity = User.builder()
                 .username(username)
