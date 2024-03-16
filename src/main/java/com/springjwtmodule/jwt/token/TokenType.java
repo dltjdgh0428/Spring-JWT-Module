@@ -1,4 +1,4 @@
-package com.springjwtmodule.jwt;
+package com.springjwtmodule.jwt.token;
 
 public enum TokenType {
     ACCESS("access", 600000L),

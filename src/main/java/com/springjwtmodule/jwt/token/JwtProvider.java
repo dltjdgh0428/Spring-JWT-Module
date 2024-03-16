@@ -1,4 +1,4 @@
-package com.springjwtmodule.jwt;
+package com.springjwtmodule.jwt.token;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;

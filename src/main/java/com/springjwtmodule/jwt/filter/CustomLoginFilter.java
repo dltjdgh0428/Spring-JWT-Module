@@ -1,6 +1,7 @@
-package com.springjwtmodule.jwt;
+package com.springjwtmodule.jwt.filter;
 
 import com.springjwtmodule.dto.oauth.RefreshDto;
+import com.springjwtmodule.jwt.token.JwtProvider;
 import com.springjwtmodule.service.RefreshService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,8 +18,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import java.util.Collection;
 import java.util.Iterator;
 
-import static com.springjwtmodule.jwt.TokenType.ACCESS;
-import static com.springjwtmodule.jwt.TokenType.REFRESH;
+import static com.springjwtmodule.jwt.token.TokenType.ACCESS;
+import static com.springjwtmodule.jwt.token.TokenType.REFRESH;
 
 @RequiredArgsConstructor
 public class CustomLoginFilter extends UsernamePasswordAuthenticationFilter {

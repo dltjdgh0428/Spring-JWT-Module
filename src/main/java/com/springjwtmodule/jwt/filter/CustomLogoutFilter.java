@@ -1,5 +1,6 @@
-package com.springjwtmodule.jwt;
+package com.springjwtmodule.jwt.filter;
 
+import com.springjwtmodule.jwt.token.JwtProvider;
 import com.springjwtmodule.service.RefreshService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -13,7 +14,7 @@ import org.springframework.web.filter.GenericFilterBean;
 
 import java.io.IOException;
 
-import static com.springjwtmodule.jwt.TokenType.REFRESH;
+import static com.springjwtmodule.jwt.token.TokenType.REFRESH;
 
 @RequiredArgsConstructor
 public class CustomLogoutFilter extends GenericFilterBean {

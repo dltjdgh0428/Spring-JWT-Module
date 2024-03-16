@@ -1,7 +1,8 @@
-package com.springjwtmodule.jwt;
+package com.springjwtmodule.jwt.filter;
 
 import com.springjwtmodule.config.oauth.CustomUserDetails;
 import com.springjwtmodule.entity.user.User;
+import com.springjwtmodule.jwt.token.JwtProvider;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,7 +16,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-import static com.springjwtmodule.jwt.TokenType.ACCESS;
+import static com.springjwtmodule.jwt.token.TokenType.ACCESS;
 
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
