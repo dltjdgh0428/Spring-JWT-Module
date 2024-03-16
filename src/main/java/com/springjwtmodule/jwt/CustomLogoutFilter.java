@@ -13,6 +13,8 @@ import org.springframework.web.filter.GenericFilterBean;
 
 import java.io.IOException;
 
+import static com.springjwtmodule.jwt.TokenType.REFRESH;
+
 @RequiredArgsConstructor
 public class CustomLogoutFilter extends GenericFilterBean {
 
@@ -55,7 +57,7 @@ public class CustomLogoutFilter extends GenericFilterBean {
     private String extractRefreshToken(HttpServletRequest request) {
         if (request.getCookies() == null) return null;
         for (Cookie cookie : request.getCookies()) {
-            if ("refresh".equals(cookie.getName())) {
+            if (REFRESH.getType().equals(cookie.getName())) {
                 return cookie.getValue();
             }
         }
@@ -63,7 +65,7 @@ public class CustomLogoutFilter extends GenericFilterBean {
     }
 
     private void clearRefreshTokenCookie(HttpServletResponse response) {
-        Cookie cookie = new Cookie("refresh", null);
+        Cookie cookie = new Cookie(REFRESH.getType(), null);
         cookie.setMaxAge(0);
         cookie.setPath("/");
         response.addCookie(cookie);

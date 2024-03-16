@@ -17,8 +17,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import java.util.Collection;
 import java.util.Iterator;
 
-import static com.springjwtmodule.jwt.JwtExpiration.ACCESS_TOKEN_EXPIRATION;
-import static com.springjwtmodule.jwt.JwtExpiration.REFRESH_TOKEN_EXPIRATION;
+import static com.springjwtmodule.jwt.TokenType.ACCESS;
+import static com.springjwtmodule.jwt.TokenType.REFRESH;
 
 @RequiredArgsConstructor
 public class CustomLoginFilter extends UsernamePasswordAuthenticationFilter {
@@ -44,14 +44,14 @@ public class CustomLoginFilter extends UsernamePasswordAuthenticationFilter {
         String role = auth.getAuthority();
 
         //토큰 생성
-        String access = jwtProvider.createJwt("access", username, role, ACCESS_TOKEN_EXPIRATION.getExpirationTime());
-        String refresh = jwtProvider.createJwt("refresh", username, role, REFRESH_TOKEN_EXPIRATION.getExpirationTime());
+        String access = jwtProvider.createJwt(ACCESS.getType(), username, role, ACCESS.getExpirationTime());
+        String refresh = jwtProvider.createJwt(REFRESH.getType(), username, role, REFRESH.getExpirationTime());
 
-        refreshService.리프레시토큰생성(new RefreshDto(username, refresh, REFRESH_TOKEN_EXPIRATION.getExpirationTime()));
+        refreshService.리프레시토큰생성(new RefreshDto(username, refresh, REFRESH.getExpirationTime()));
 
         //응답 설정
-        response.setHeader("access", access);
-        response.addCookie(jwtProvider.createCookie("refresh", refresh));
+        response.setHeader(ACCESS.getType(), access);
+        response.addCookie(jwtProvider.createCookie(REFRESH.getType(), refresh));
         response.setStatus(HttpStatus.OK.value());
 
     }

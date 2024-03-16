@@ -15,6 +15,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import static com.springjwtmodule.jwt.TokenType.ACCESS;
+
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
 
@@ -22,7 +24,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String accessToken = request.getHeader("access");
+        String accessToken = request.getHeader(ACCESS.getType());
 
         if (accessToken == null) {
             filterChain.doFilter(request, response);
@@ -40,7 +42,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
     private boolean validateToken(HttpServletResponse response, String accessToken) throws IOException {
         try {
-            if (jwtProvider.isExpired(accessToken) || !"access".equals(jwtProvider.getCategory(accessToken))) {
+            if (jwtProvider.isExpired(accessToken) || !ACCESS.getType().equals(jwtProvider.getCategory(accessToken))) {
                 sendErrorResponse(response, "Invalid or expired access token", HttpServletResponse.SC_UNAUTHORIZED);
                 return false;
             }
