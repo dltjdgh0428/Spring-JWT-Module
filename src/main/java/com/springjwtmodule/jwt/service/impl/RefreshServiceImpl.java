@@ -1,9 +1,9 @@
-package com.springjwtmodule.service.impl;
+package com.springjwtmodule.jwt.service.impl;
 
 import com.springjwtmodule.dto.oauth.RefreshDto;
-import com.springjwtmodule.entity.refresh.Refresh;
-import com.springjwtmodule.entity.refresh.RefreshRepository;
-import com.springjwtmodule.service.RefreshService;
+import com.springjwtmodule.jwt.domain.Refresh;
+import com.springjwtmodule.jwt.repository.RefreshRepository;
+import com.springjwtmodule.jwt.service.RefreshService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

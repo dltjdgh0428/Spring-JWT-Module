@@ -1,4 +1,4 @@
-package com.springjwtmodule.entity.refresh;
+package com.springjwtmodule.jwt.domain;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

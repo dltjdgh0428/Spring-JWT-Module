@@ -2,7 +2,7 @@ package com.springjwtmodule.jwt.filter;
 
 import com.springjwtmodule.dto.oauth.RefreshDto;
 import com.springjwtmodule.jwt.token.JwtProvider;
-import com.springjwtmodule.service.RefreshService;
+import com.springjwtmodule.jwt.service.RefreshService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

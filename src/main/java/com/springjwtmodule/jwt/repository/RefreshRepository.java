@@ -1,6 +1,6 @@
-package com.springjwtmodule.entity.refresh;
+package com.springjwtmodule.jwt.repository;
 
-import jakarta.transaction.Transactional;
+import com.springjwtmodule.jwt.domain.Refresh;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface RefreshRepository extends JpaRepository<Refresh, Long> {

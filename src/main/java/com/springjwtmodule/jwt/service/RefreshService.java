@@ -1,4 +1,4 @@
-package com.springjwtmodule.service;
+package com.springjwtmodule.jwt.service;
 
 import com.springjwtmodule.dto.oauth.RefreshDto;
 

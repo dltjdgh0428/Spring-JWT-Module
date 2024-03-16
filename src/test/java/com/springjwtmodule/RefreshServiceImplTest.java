@@ -5,8 +5,8 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
 import com.springjwtmodule.dto.oauth.RefreshDto;
-import com.springjwtmodule.entity.refresh.RefreshRepository;
-import com.springjwtmodule.service.RefreshService;
+import com.springjwtmodule.jwt.repository.RefreshRepository;
+import com.springjwtmodule.jwt.service.RefreshService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

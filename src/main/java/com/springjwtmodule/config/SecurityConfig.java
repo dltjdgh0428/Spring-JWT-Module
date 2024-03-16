@@ -4,7 +4,7 @@ import com.springjwtmodule.jwt.filter.CustomLogoutFilter;
 import com.springjwtmodule.jwt.filter.JwtFilter;
 import com.springjwtmodule.jwt.token.JwtProvider;
 import com.springjwtmodule.jwt.filter.CustomLoginFilter;
-import com.springjwtmodule.service.RefreshService;
+import com.springjwtmodule.jwt.service.RefreshService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

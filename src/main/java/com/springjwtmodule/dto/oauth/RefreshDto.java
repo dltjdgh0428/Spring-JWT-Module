@@ -1,6 +1,6 @@
 package com.springjwtmodule.dto.oauth;
 
-import com.springjwtmodule.entity.refresh.Refresh;
+import com.springjwtmodule.jwt.domain.Refresh;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 

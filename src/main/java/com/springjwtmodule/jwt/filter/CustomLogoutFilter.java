@@ -1,7 +1,7 @@
 package com.springjwtmodule.jwt.filter;
 
 import com.springjwtmodule.jwt.token.JwtProvider;
-import com.springjwtmodule.service.RefreshService;
+import com.springjwtmodule.jwt.service.RefreshService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;

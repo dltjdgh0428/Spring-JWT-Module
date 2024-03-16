@@ -1,9 +1,9 @@
-package com.springjwtmodule.controller;
+package com.springjwtmodule.jwt.controller;
 
 import com.springjwtmodule.dto.CMRespDto;
 import com.springjwtmodule.dto.oauth.RefreshDto;
 import com.springjwtmodule.jwt.token.JwtProvider;
-import com.springjwtmodule.service.RefreshService;
+import com.springjwtmodule.jwt.service.RefreshService;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
